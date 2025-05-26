@@ -66,9 +66,9 @@ const askQuestion = async () => {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold">Document Q&A Chat</h1>
+      <h1 className="text-3xl font-bold">Document Question & Answering Chat</h1>
 
-      <div className="mx-auto lg:flex space-y-5 gap-8 items-start">
+      <div className="mx-auto lg:flex space-y-5 gap-8 items-start pt-10">
 
             <div className="space-y-3 w-full lg:w-[1/2]">
               <div className="w-full flex gap-2">
@@ -111,7 +111,6 @@ const askQuestion = async () => {
             )}
               </div>
             </div>
-
 
           </div>
     </div>
