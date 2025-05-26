@@ -4,24 +4,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-
+// Main Component
 export default function App() {
+
+  // Selected file
   const [file, setFile] = useState<File | null>(null);
+
+  // Question input from the user
   const [query, setQuery] = useState("");
+
+  //Answer to the question
   const [response, setResponse] = useState("");
+
+  // loading status (document uploading/uploaded, question asking
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [asking, setAsking] = useState(false);
+
+  // Prompt a message when the document uploaded
   const [docUploadStatus, setDocUploadStatus] = useState("");
 
-
+  // Document upload handling
   const uploadDocument = async () => {
   if (!file) return alert("Please select a file!");
 
   const formData = new FormData();
   formData.append("file", file);
 
-  setUploading(true);
+  setUploading(true); // show uploading status of the document
   try {
     const res = await fetch("http://localhost:8000/upload", {
       method: "POST",
@@ -29,8 +39,8 @@ export default function App() {
     });
     const data = await res.json();
 
-    setUploaded(true);
-    setDocUploadStatus(data.message)
+    setUploaded(true); // Mark as document uploaded
+    setDocUploadStatus(data.message) // Display success message
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     alert("Upload failed");
@@ -40,6 +50,7 @@ export default function App() {
   }
 };
 
+  //Send question to the backend and get answer
 const askQuestion = async () => {
   if (!uploaded) return alert("Please upload a document first.");
   if (!query.trim()) return alert("Please enter a question");
