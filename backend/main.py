@@ -13,18 +13,21 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 import tempfile
 
+# load variables from .env file
 load_dotenv()
 
-# Set OpenAI API Key
+# Set to use OpenAI API key from .env file
 openai_key = os.getenv("OPENAI_API_KEY")
 if not openai_key:
     raise ValueError("OPENAI_API_KEY is not set in the environment")
 
-os.environ["OPENAI_API_KEY"] = openai_key  # Set once only
-# Init FastAPI
+# Set the API key as an environment variable
+os.environ["OPENAI_API_KEY"] = openai_key
+
+# Fast API initialization
 app = FastAPI()
 
-#Enable cors for frontend communication
+#Cors for connect the system with frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -33,9 +36,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory FAISS store
+# in-memory FAISS vectore which used to store embeddings
 vectorstore = None
 
+# Custom prompt to guide the model to get the response from the retrieved context
 custom_prompt = PromptTemplate(
     input_variables=["context", "question"],
     template="""
@@ -50,21 +54,21 @@ custom_prompt = PromptTemplate(
 )
 
 
-# Endpoint 1: Upload and embed documents
+# Document uploading and embedding endpoint
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     global vectorstore
 
-    # Save uploaded file temporarily
+    # Saving uploaded file in a temporary location
     temp_file = tempfile.NamedTemporaryFile(delete=False)
     content = await file.read()
     temp_file.write(content)
     temp_file.close()
 
-    # Determine file type
+    # Detect the type of the file (pdf/txt)
     file_ext = Path(file.filename).suffix.lower()
 
-    # Load based on extension
+    # Load based on the extension of the uploaded file
     if file_ext == ".pdf":
         loader = PyMuPDFLoader(temp_file.name)
     elif file_ext == ".txt":
@@ -74,33 +78,39 @@ async def upload_file(file: UploadFile = File(...)):
 
     print("running embedding")
 
-    # Load and split
+    # Load the document and split it into managable chunks
     docs = loader.load()
     splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     splits = splitter.split_documents(docs)
 
-    # Embed and store in FAISS
+    # Embed the chunks using OpenAI embeddings and store in FAISS for future use
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vectorstore = FAISS.from_documents(splits, embeddings)
 
     return {"message": f"{file.filename} embedded and stored."}
 
-# Endpoint 2: Chat with RAG
+# Chat(ask questions) about the uploaded document using this endpoint.
 @app.post("/chat")
 async def chat(query: str = Form(...)):
+    # Before proceeding make sure the document is correctly uploaded and embedded
     if not vectorstore:
         return JSONResponse(status_code=400, content={"error": "No documents uploaded."})
 
+    # Define retriever from vectorstore
     retriever = vectorstore.as_retriever()
+
+    # the LLM model
     llm = ChatOpenAI(
         model="gpt-4o"
     )
 
+    # Build the Q&A chain using the above defined retriever and the custom prompt
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
-        chain_type="stuff",
         chain_type_kwargs={"prompt": custom_prompt}
     )
+
+    # Run the Q&A chain
     response = qa_chain.invoke(query)
     return {"response": response}
