@@ -25,7 +25,6 @@ After some researches on the same domain I came up with openAI(gpt 4o) because t
 # Setup Instructions 
 1. Clone the repository
    - git clone https://github.com/your username/doc_qa_API
-   - cd doc_qa_API
 2. Backend Setup
    1. Install dependencies
        - cd backend
