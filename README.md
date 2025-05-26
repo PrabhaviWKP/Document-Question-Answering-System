@@ -30,8 +30,8 @@ After some researches on the same domain I came up with openAI(gpt 4o) because t
        - cd backend
        - pip install -r requirements.txt
    2. Add .env file
-       - inside the backend directory create .env file 
-       - OPENAI_API_KEY = your-openai-api-key
+       - inside the backend directory create .env file and include the openAI API key inside the .env file 
+       - OPENAI_API_KEY = your-openai-api-key (Replace your-openai-api-key with a correct API key)
    3. Run the backend server
        - uvicorn main:app --reload
 3. Frontend Setup
