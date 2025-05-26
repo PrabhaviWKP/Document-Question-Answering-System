@@ -1,6 +1,6 @@
 # Document Based Question Answering System
-This system allows users to upload .pdf or .txt files and ask questions about the document to get accurate answers from the uploaded document. This uses ***Langchain***, _**OpenAI**, **FAISS**,_ _**FASTAPLI**_ for backend and _**react-vite**_ for frontend.
-After some researches on the same domain I came up with openAI(gpt 4o) because the model generally perform well comparing to the other platforms like Mistral and QwenAI. OpenAI has a larger model size, extensive training data and fine tuned for specific tasks. While the Mistal and QwenAI offer advantages in cost the OpenAI's performance was significant.
+This system allows users to upload .pdf or .txt files and ask questions about the document to get accurate answers. This uses ***Langchain***, _**OpenAI**, **FAISS**,_ _**FASTAPLI**_ for backend and _**react-vite**_ for frontend.
+After some researches on the same domain I came up with openAI(gpt 4o) because the model generally perform well comparing to the other platforms like Mistral and QwenAI. OpenAI has a larger model size, extensive training data and fine tuned for specific tasks. While the Mistral and QwenAI offer advantages in cost, the OpenAI's performance was still significant.
 
 # Features
 - Upload .pdf or .txt documents
